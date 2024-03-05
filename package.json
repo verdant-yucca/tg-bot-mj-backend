@@ -1,0 +1,37 @@
+{
+  "name": "tg-bot-mj-backend",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "lint": "npx eslint .",
+    "dev": "nodemon --trace-warnings app.js"
+  },
+  "keywords": [],
+  "author": "Roman Davydenko Deadshot323rd@yandex.ru",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^8.16.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "nodemon": "^2.0.16"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.1",
+    "celebrate": "^15.0.1",
+    "chalk": "^2.4.2",
+    "compress-images": "^2.0.5",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.0.0",
+    "express": "^4.18.2",
+    "express-fileupload": "^1.4.0",
+    "express-winston": "^4.2.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.7.0",
+    "multer": "^1.4.5-lts.1",
+    "request": "^2.88.2",
+    "validator": "^13.7.0",
+    "winston": "^3.7.2"
+  }
+}
