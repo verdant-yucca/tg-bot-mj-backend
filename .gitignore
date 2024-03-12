@@ -8,6 +8,7 @@ node_modules
 public
 tmp
 log
+dist
 
 # Optional npm cache directory
 .npm

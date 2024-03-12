@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "types": [
+      "node"
+    ],
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es2020",
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "outDir": "./dist",
+    "baseUrl": "./src",
+    "strict": true,
+    "paths": {
+      "src/*": [
+        "*"
+      ]
+    },
+    "incremental": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "strictNullChecks": true
+  },
+  "ts-node": {
+    "files": true
+  },
+  "exclude": [
+    "node_modules",
+    "files",
+    "./dist"
+  ]
+}
