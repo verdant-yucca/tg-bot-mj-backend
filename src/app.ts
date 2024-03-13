@@ -14,7 +14,7 @@ dotenv.config();
 
 const { PORT = 3000 } = process.env;
 const app = express();
-const IAMClass = new IAM();
+// const IAMClass = new IAM();
 
 mongoose.connect('mongodb://127.0.0.1:27017/tg-bot-mj'); // localhost || 127.0.0.1
 app.use(bodyParser.json());
@@ -27,9 +27,9 @@ app.use(
         tempFileDir: 'tmp',
     }),
 );
-IAMClass.getIAMToken().then(res => {
-    console.log(res);
-});
+// IAMClass.getIAMToken().then(res => {
+//     console.log(res);
+// });
 
 app.use(router);
 
