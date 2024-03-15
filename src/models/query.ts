@@ -24,6 +24,7 @@ const querySchema = new mongoose.Schema({
     discordMsgId: String,
     flags: String,
     buttons: String,
+    action: String,
     dateUpdate: Date,
 });
 const Query = mongoose.model<QueryModel>('query', querySchema);

@@ -14,13 +14,15 @@ interface UpdateQueryBodyParams {
     discordMsgId: string;
     flags: string;
     buttons: string;
+    action: string;
 }
 
 interface GetQueryBodyParams {
     _id: string;
-    discordMsgId: string;
-    flags: string;
-    buttons: string;
+}
+
+interface FindOutstandingQueryBodyParams {
+    action: string;
 }
 
 export const saveQuery = async (req: Request<any, any, SaveQueryBodyParams>, res: Response, next: NextFunction) => {
@@ -37,14 +39,15 @@ export const saveQuery = async (req: Request<any, any, SaveQueryBodyParams>, res
 };
 
 export const updateQuery = async (req: Request<any, any, UpdateQueryBodyParams>, res: Response, next: NextFunction) => {
-    const { _id, buttons, flags, discordMsgId } = req.body;
+    const { _id, buttons, flags, discordMsgId, action } = req.body;
     const currentDate = new Date().toISOString();
-    console.log('req.body', req.body);
+
     Query.findOneAndUpdate(
         { _id },
         {
             buttons,
             flags,
+            action,
             discordMsgId,
             dateUpdate: currentDate,
         },
@@ -74,6 +77,34 @@ export const getQuery = async (req: Request<any, any, GetQueryBodyParams>, res: 
                 res.send(data);
             } else {
                 throw new NotFoundError(ERROR_NOT_FOUND.messageUser);
+            }
+        })
+        .catch(err => {
+            if (err.name === 'ValidationError' || err.name === 'CastError') {
+                next(new BadRequestError(ERROR_BED_REQUEST.message));
+            } else {
+                next(err);
+            }
+        });
+};
+
+export const findOutstandingQuery = async (
+    req: Request<any, any, FindOutstandingQueryBodyParams>,
+    res: Response,
+    next: NextFunction,
+) => {
+    const { action } = req.body;
+
+    Query.findOne({
+        action,
+        dateUpdate: { $exists: true, $ne: null },
+    })
+        .then(data => {
+            console.log('data', data);
+            if (data) {
+                res.send({ result: true });
+            } else {
+                res.send({ result: false });
             }
         })
         .catch(err => {
