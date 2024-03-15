@@ -6,7 +6,7 @@
     "start": "ts-node src/app.ts",
     "lint": "npx eslint .",
     "build": "npx tsc",
-    "dev": "ts-node-dev src/app.ts"
+    "dev": "nodemon --ignore data/ --watch 'src/**/*.ts' --exec 'ts-node --files src/app.ts' src/app.ts"
   },
   "keywords": [],
   "author": "Roman Davydenko Deadshot323rd@yandex.ru",

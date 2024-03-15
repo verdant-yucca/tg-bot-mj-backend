@@ -16,11 +16,15 @@ const querySchema = new mongoose.Schema({
     prompt: {
         type: String,
         required: true,
-    }, 
+    },
     dateQuery: {
-        type: Date, 
-        default: Date.now
-    }
+        type: Date,
+        default: Date.now,
+    },
+    discordMsgId: String,
+    flags: String,
+    buttons: String,
+    dateUpdate: Date,
 });
 const Query = mongoose.model<QueryModel>('query', querySchema);
 
