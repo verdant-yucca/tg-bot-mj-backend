@@ -5,6 +5,7 @@ const allowedCors = [
     'http://verdant-yucca.ru',
     'http://localhost:3000',
     'http://localhost:3001',
+    'http://localhost:3010',
 ];
 
 const cors = (req: Request, res: Response, next: NextFunction) => {
