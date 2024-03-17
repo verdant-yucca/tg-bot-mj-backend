@@ -1,4 +1,4 @@
-import axiosCall from 'axios/index';
+import axiosCall from 'axios';
 import * as fs from 'fs';
 import * as dotenv from 'dotenv';
 import { Request, Response, NextFunction } from 'express';
