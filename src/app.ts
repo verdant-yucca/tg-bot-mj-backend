@@ -8,13 +8,11 @@ import cors from './middlewares/cors';
 import centralizedError from './middlewares/centralizedError';
 import { requestLogger, errorLogger } from './middlewares/logger';
 import router from './routes/routes';
-import IAM from './middlewares/IAM';
 
 dotenv.config();
 
 const { PORT = 3000 } = process.env;
 const app = express();
-// const IAMClass = new IAM();
 
 mongoose.connect('mongodb://127.0.0.1:27017/tg-bot-mj'); // localhost || 127.0.0.1
 app.use(bodyParser.json());
@@ -27,9 +25,6 @@ app.use(
         tempFileDir: 'tmp',
     }),
 );
-// IAMClass.getIAMToken().then(res => {
-//     console.log(res);
-// });
 
 app.use(router);
 
