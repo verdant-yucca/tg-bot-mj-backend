@@ -15,11 +15,6 @@
     "outDir": "./dist",
     "baseUrl": "./src",
     "strict": true,
-    "paths": {
-      "src/*": [
-        "*"
-      ]
-    },
     "incremental": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,

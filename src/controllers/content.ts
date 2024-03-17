@@ -1,3 +1,4 @@
+import axiosCall from 'axios/index';
 import * as fs from 'fs';
 import * as dotenv from 'dotenv';
 import { Request, Response, NextFunction } from 'express';
@@ -26,6 +27,10 @@ export const getContent = async (req: Request, res: Response, next: NextFunction
 export const updateContent = async (req: Request<any, any, any>, res: Response, next: NextFunction) => {
     try {
         fs.writeFileSync(filePath, JSON.stringify(req.body, null, 4), 'utf-8');
+        await axiosCall({
+            method: 'GET',
+            url: `http://localhost:3001/updateText`,
+        });
         res.send({ result: 'Успешно' });
     } catch (e) {
         console.log(e);
