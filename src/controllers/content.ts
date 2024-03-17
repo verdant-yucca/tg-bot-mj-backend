@@ -29,7 +29,7 @@ export const updateContent = async (req: Request<any, any, any>, res: Response, 
         fs.writeFileSync(filePath, JSON.stringify(req.body, null, 4), 'utf-8');
         await axiosCall({
             method: 'GET',
-            url: `http://localhost:3001/updateText`,
+            url: `127.0.0.1:3001/updateText`,
         });
         res.send({ result: 'Успешно' });
     } catch (e) {
