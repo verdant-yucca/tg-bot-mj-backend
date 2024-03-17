@@ -8,6 +8,7 @@ import { ERROR_BED_REQUEST } from '../utils/constants';
 dotenv.config();
 
 const filePath = process.env.CONTENT_PATH || '';
+const botUrl = process.env.BOT_URL || '';
 
 export const getContent = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -29,7 +30,7 @@ export const updateContent = async (req: Request<any, any, any>, res: Response, 
         fs.writeFileSync(filePath, JSON.stringify(req.body, null, 4), 'utf-8');
         await axiosCall({
             method: 'GET',
-            url: `127.0.0.1:3001/updateText`,
+            url: `${botUrl}/updateText`,
         });
         res.send({ result: 'Успешно' });
     } catch (e) {
