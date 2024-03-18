@@ -44,34 +44,36 @@ export const saveQuery = async (req: Request<any, any, SaveQueryBodyParams>, res
 };
 
 export const updateQuery = async (req: Request<any, any, UpdateQueryBodyParams>, res: Response, next: NextFunction) => {
-    // const { _id, buttons, flags, discordMsgId, action } = req.body;
-    // const currentDate = new Date().toISOString();
-    // const { dateQuery } = await Query.findOne({ _id });
-    //
-    // Query.findOneAndUpdate(
-    //     { _id },
-    //     {
-    //         buttons,
-    //         flags,
-    //         action,
-    //         discordMsgId,
-    //         dateUpdate: currentDate,
-    //     },
-    // )
-    //     .then(data => {
-    //         if (data) {
-    //             res.send({ _id: data._id });
-    //         } else {
-    //             throw new NotFoundError(ERROR_NOT_FOUND.messageUser);
-    //         }
-    //     })
-    //     .catch(err => {
-    //         if (err.name === 'ValidationError' || err.name === 'CastError') {
-    //             next(new BadRequestError(ERROR_BED_REQUEST.message));
-    //         } else {
-    //             next(err);
-    //         }
-    //     });
+    const { _id, buttons, flags, discordMsgId, action } = req.body;
+    const currentDate = new Date().toISOString();
+    const { dateQuery } = (await Query.findOne({ _id })) as { dateQuery: Date };
+    const leadTime = new Date().getTime() - dateQuery.getTime();
+
+    Query.findOneAndUpdate(
+        { _id },
+        {
+            buttons,
+            flags,
+            action,
+            discordMsgId,
+            dateUpdate: currentDate,
+            leadTime,
+        },
+    )
+        .then(data => {
+            if (data) {
+                res.send({ _id: data._id });
+            } else {
+                throw new NotFoundError(ERROR_NOT_FOUND.messageUser);
+            }
+        })
+        .catch(err => {
+            if (err.name === 'ValidationError' || err.name === 'CastError') {
+                next(new BadRequestError(ERROR_BED_REQUEST.message));
+            } else {
+                next(err);
+            }
+        });
 };
 
 export const getQuery = async (req: Request<any, any, GetQueryBodyParams>, res: Response, next: NextFunction) => {
