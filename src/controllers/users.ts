@@ -64,8 +64,16 @@ export const login = async (req: Request<any, any, BodyParams>, res: Response, n
     }
 };
 
-module.exports.getUsers = (req: Request, res: Response, next: NextFunction) => {
+interface GetUsersBodyParams {
+    page: string;
+    pageSize: string;
+}
+
+export const getUsers = (req: Request<any, any, GetUsersBodyParams>, res: Response, next: NextFunction) => {
+    const { page, pageSize } = req.body;
     User.find({})
-        .then(users => res.send(users))
+        .skip((+page - 1) * +pageSize)
+        .limit(+pageSize)
+        .then(users => res.send({ users }))
         .catch(next);
 };

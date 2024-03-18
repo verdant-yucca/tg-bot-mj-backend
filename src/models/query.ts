@@ -26,6 +26,7 @@ const querySchema = new mongoose.Schema({
     buttons: String,
     action: String,
     dateUpdate: Date,
+    leadTime: Number,
 });
 const Query = mongoose.model<QueryModel>('query', querySchema);
 

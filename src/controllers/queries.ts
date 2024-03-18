@@ -21,6 +21,11 @@ interface GetQueryBodyParams {
     _id: string;
 }
 
+interface GetQueriesBodyParams {
+    dateStart: string;
+    dateEnd: string;
+}
+
 interface FindOutstandingQueryBodyParams {
     action: string;
 }
@@ -39,22 +44,43 @@ export const saveQuery = async (req: Request<any, any, SaveQueryBodyParams>, res
 };
 
 export const updateQuery = async (req: Request<any, any, UpdateQueryBodyParams>, res: Response, next: NextFunction) => {
-    const { _id, buttons, flags, discordMsgId, action } = req.body;
-    const currentDate = new Date().toISOString();
+    // const { _id, buttons, flags, discordMsgId, action } = req.body;
+    // const currentDate = new Date().toISOString();
+    // const { dateQuery } = await Query.findOne({ _id });
+    //
+    // Query.findOneAndUpdate(
+    //     { _id },
+    //     {
+    //         buttons,
+    //         flags,
+    //         action,
+    //         discordMsgId,
+    //         dateUpdate: currentDate,
+    //     },
+    // )
+    //     .then(data => {
+    //         if (data) {
+    //             res.send({ _id: data._id });
+    //         } else {
+    //             throw new NotFoundError(ERROR_NOT_FOUND.messageUser);
+    //         }
+    //     })
+    //     .catch(err => {
+    //         if (err.name === 'ValidationError' || err.name === 'CastError') {
+    //             next(new BadRequestError(ERROR_BED_REQUEST.message));
+    //         } else {
+    //             next(err);
+    //         }
+    //     });
+};
 
-    Query.findOneAndUpdate(
-        { _id },
-        {
-            buttons,
-            flags,
-            action,
-            discordMsgId,
-            dateUpdate: currentDate,
-        },
-    )
+export const getQuery = async (req: Request<any, any, GetQueryBodyParams>, res: Response, next: NextFunction) => {
+    const { _id } = req.body;
+
+    Query.findOne({ _id })
         .then(data => {
             if (data) {
-                res.send({ _id: data._id });
+                res.send(data);
             } else {
                 throw new NotFoundError(ERROR_NOT_FOUND.messageUser);
             }
@@ -68,13 +94,13 @@ export const updateQuery = async (req: Request<any, any, UpdateQueryBodyParams>,
         });
 };
 
-export const getQuery = async (req: Request<any, any, GetQueryBodyParams>, res: Response, next: NextFunction) => {
-    const { _id } = req.body;
+export const getQueries = async (req: Request<any, any, GetQueriesBodyParams>, res: Response, next: NextFunction) => {
+    const { dateStart, dateEnd } = req.body;
 
-    Query.findOne({ _id })
-        .then(data => {
-            if (data) {
-                res.send(data);
+    Query.find({ dateQuery: { $gte: new Date(dateStart), $lte: new Date(dateEnd) } })
+        .then(queries => {
+            if (queries) {
+                res.send({ queries });
             } else {
                 throw new NotFoundError(ERROR_NOT_FOUND.messageUser);
             }
