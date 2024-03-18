@@ -99,7 +99,7 @@ export const getQuery = async (req: Request<any, any, GetQueryBodyParams>, res: 
 export const getQueries = async (req: Request<any, any, GetQueriesBodyParams>, res: Response, next: NextFunction) => {
     const { dateStart, dateEnd } = req.body;
 
-    Query.find({ dateQuery: { $gte: new Date(dateStart), $lte: new Date(dateEnd) } })
+    Query.find({ dateQuery: { $gte: new Date(dateStart).getTime(), $lte: new Date(dateEnd).getTime() } })
         .then(queries => {
             if (queries) {
                 res.send({ queries });
