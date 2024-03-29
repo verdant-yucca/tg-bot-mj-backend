@@ -10,6 +10,8 @@ interface User {
     avatarPath?: string;
     lastAuth?: string;
     createDate?: string;
+    countFreeQueries?: string;
+    countQueries?: string;
 }
 
 interface UserModel extends User, Document {}
