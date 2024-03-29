@@ -4,6 +4,8 @@ import { findOutstandingQuery, getQuery, getQueries, saveQuery, updateQuery } fr
 import { getTranslate } from '../controllers/translates';
 import { updateContent, getContent } from '../controllers/content';
 import { adminCreate, adminLogin } from '../controllers/adminka';
+import { getPackages, updatePackages } from '../controllers/packages';
+import { getOffers, updateOffers } from '../controllers/offers';
 
 const routerNoneAuth = express.Router();
 routerNoneAuth.post('/signin', login);
@@ -22,5 +24,11 @@ routerNoneAuth.post('/updateContent', updateContent);
 
 routerNoneAuth.post('/adminUserLogin', adminLogin);
 routerNoneAuth.post('/adminUserCreate', adminCreate);
+
+routerNoneAuth.post('/getPackages', getPackages);
+routerNoneAuth.post('/updatePackages', updatePackages);
+
+routerNoneAuth.post('/getOffers', getOffers);
+routerNoneAuth.post('/updateOffers', updateOffers);
 
 export default routerNoneAuth;
