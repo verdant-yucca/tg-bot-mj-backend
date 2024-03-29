@@ -36,6 +36,7 @@ export const login = async (req: Request<any, any, BodyParams>, res: Response, n
                 countFreeQueries,
                 countQueries,
             },
+            { returnDocument: 'after' },
         )
             .then(user => {
                 if (user) {

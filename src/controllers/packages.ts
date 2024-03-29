@@ -5,12 +5,12 @@ import { ERROR_NOT_FOUND, ERROR_BED_REQUEST } from '../utils/constants';
 import Package from '../models/package';
 
 interface PostPackagesParams {
-    packages: {
+    packages: Array<{
         _id?: string;
         name: string;
         price: string;
         count: string;
-    }[];
+    }>;
 }
 
 export const updatePackages = async (req: Request<any, any, PostPackagesParams>, res: Response, next: NextFunction) => {
@@ -25,6 +25,7 @@ export const updatePackages = async (req: Request<any, any, PostPackagesParams>,
                         price,
                         count,
                     },
+                    { returnDocument: 'after' },
                 );
             } else {
                 Package.create({ name, price, count });
