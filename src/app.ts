@@ -4,10 +4,12 @@ import mongoose from 'mongoose';
 import { errors } from 'celebrate';
 import fileUpload from 'express-fileupload';
 import bodyParser from 'body-parser';
+import cron from 'node-cron';
 import cors from './middlewares/cors';
 import centralizedError from './middlewares/centralizedError';
 import { requestLogger, errorLogger } from './middlewares/logger';
 import router from './routes/routes';
+import { updateCountFreeQueriesForAllUsers } from './cron/updateCountFreeQueriesForAllUsers';
 
 dotenv.config();
 
@@ -25,6 +27,14 @@ app.use(
         tempFileDir: 'tmp',
     }),
 );
+
+cron.schedule('0 0 * * *', async () => {
+    try {
+        updateCountFreeQueriesForAllUsers('10');
+    } catch (e) {
+        console.log(e);
+    }
+});
 
 app.use(router);
 

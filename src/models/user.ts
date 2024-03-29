@@ -48,6 +48,14 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: false,
     },
+    countFreeQueries: {
+        type: String,
+        required: false,
+    },
+    countQueries: {
+        type: String,
+        required: false,
+    },
 });
 const User = mongoose.model<UserModel>('user', userSchema);
 

@@ -13,9 +13,12 @@ interface BodyParams {
     firstName: string;
     lastName?: string;
     avatarPath?: string;
+    countQueries?: string;
+    countFreeQueries?: string;
 }
 export const login = async (req: Request<any, any, BodyParams>, res: Response, next: NextFunction) => {
-    const { chatId, languageCode, username, firstName, lastName, avatarPath } = req.body;
+    const { chatId, languageCode, username, firstName, lastName, avatarPath, countFreeQueries, countQueries } =
+        req.body;
     const foundUser = await User.findOne({ chatId });
     const currentDate = new Date().toISOString();
     console.log('foundUser', foundUser);
@@ -23,7 +26,16 @@ export const login = async (req: Request<any, any, BodyParams>, res: Response, n
     if (foundUser) {
         User.findOneAndUpdate(
             { chatId },
-            { languageCode, username, firstName, lastName, avatarPath, lastAuth: currentDate },
+            {
+                languageCode,
+                username,
+                firstName,
+                lastName,
+                avatarPath,
+                lastAuth: currentDate,
+                countFreeQueries,
+                countQueries,
+            },
         )
             .then(user => {
                 if (user) {
@@ -52,6 +64,8 @@ export const login = async (req: Request<any, any, BodyParams>, res: Response, n
             avatarPath,
             createDate,
             lastAuth,
+            countQueries: 0,
+            countFreeQueries: 0,
         })
             .then(user => res.send({ user }))
             .catch(err => {
