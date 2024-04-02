@@ -7,6 +7,7 @@ import { ERROR_NOT_FOUND, ERROR_BED_REQUEST } from '../utils/constants';
 interface SaveQueryBodyParams {
     chatId: string;
     prompt: string;
+    originPrompt: string;
 }
 
 interface UpdateQueryBodyParams {
@@ -31,11 +32,12 @@ interface FindOutstandingQueryBodyParams {
 }
 
 export const saveQuery = async (req: Request<any, any, SaveQueryBodyParams>, res: Response, next: NextFunction) => {
-    const { chatId, prompt } = req.body;
+    const { chatId, prompt, originPrompt } = req.body;
 
     Query.create({
         chatId,
         prompt,
+        originPrompt,
     })
         .then(data => {
             res.send(data);

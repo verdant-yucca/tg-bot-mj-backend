@@ -24,39 +24,34 @@ const userSchema = new mongoose.Schema({
     },
     languageCode: {
         type: String,
-        required: false,
     },
     username: {
         type: String,
-        required: false,
     },
     firstName: {
         type: String,
-        required: false,
     },
     lastName: {
         type: String,
-        required: false,
     },
     avatarPath: {
         type: String,
-        required: false,
     },
     lastAuth: {
         type: String,
-        required: false,
     },
     createDate: {
         type: String,
-        required: false,
     },
     countFreeQueries: {
         type: String,
-        required: false,
     },
     countQueries: {
         type: String,
-        required: false,
+    },
+    left: {
+        type: Boolean,
+        default: true,
     },
 });
 const User = mongoose.model<UserModel>('user', userSchema);

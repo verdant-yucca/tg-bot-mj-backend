@@ -1,5 +1,3 @@
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 import User from '../models/user';
 import NotFoundError from '../errors/NotFoundError';
@@ -15,32 +13,34 @@ interface BodyParams {
     avatarPath?: string;
     countQueries?: string;
     countFreeQueries?: string;
+    lastAuth?: string;
+    left?: boolean;
 }
+
 export const login = async (req: Request<any, any, BodyParams>, res: Response, next: NextFunction) => {
-    const { chatId, languageCode, username, firstName, lastName, avatarPath, countFreeQueries, countQueries } =
+    const { chatId, languageCode, username, firstName, lastName, avatarPath, countFreeQueries, countQueries, left } =
         req.body;
     const foundUser = await User.findOne({ chatId });
     const currentDate = new Date().toISOString();
-    console.log('foundUser', foundUser);
+
+    const updatedUserFields = {} as BodyParams;
+    updatedUserFields.lastAuth = currentDate;
+    if (typeof languageCode !== 'undefined') updatedUserFields.languageCode = languageCode;
+    if (typeof username !== 'undefined') updatedUserFields.username = username;
+    if (typeof firstName !== 'undefined') updatedUserFields.firstName = firstName;
+    if (typeof lastName !== 'undefined') updatedUserFields.lastName = lastName;
+    if (typeof avatarPath !== 'undefined') updatedUserFields.languageCode = languageCode;
+    if (typeof countFreeQueries !== 'undefined') updatedUserFields.languageCode = languageCode;
+    if (typeof countQueries !== 'undefined') updatedUserFields.languageCode = languageCode;
+    if (typeof left !== 'undefined') updatedUserFields.left = left;
+
+    foundUser && console.log('updatedUserFields', chatId, updatedUserFields);
 
     if (foundUser) {
-        User.findOneAndUpdate(
-            { chatId },
-            {
-                languageCode,
-                username,
-                firstName,
-                lastName,
-                avatarPath,
-                lastAuth: currentDate,
-                countFreeQueries,
-                countQueries,
-            },
-            { returnDocument: 'after' },
-        )
+        User.findOneAndUpdate({ chatId }, updatedUserFields, { returnDocument: 'after' })
             .then(user => {
                 if (user) {
-                    res.send({ user });
+                    res.send(user);
                 } else {
                     throw new NotFoundError(ERROR_NOT_FOUND.messageUser);
                 }
@@ -58,7 +58,7 @@ export const login = async (req: Request<any, any, BodyParams>, res: Response, n
 
         User.create({
             chatId,
-            languageCode,
+            languageCode: languageCode || 'ru',
             username,
             firstName,
             lastName,
@@ -76,6 +76,79 @@ export const login = async (req: Request<any, any, BodyParams>, res: Response, n
                     next(err);
                 }
             });
+    }
+};
+
+interface GetUserByIdParams {
+    chatId: string;
+}
+
+export const getUserById = async (req: Request<any, any, GetUserByIdParams>, res: Response, next: NextFunction) => {
+    try {
+        const { chatId } = req.body;
+        User.findOne({ chatId })
+            .then(user => {
+                if (user) {
+                    res.send(user);
+                } else {
+                    throw new NotFoundError(ERROR_NOT_FOUND.messageUser);
+                }
+            })
+            .catch(err => {
+                if (err.name === 'ValidationError' || err.name === 'CastError') {
+                    next(new BadRequestError(ERROR_BED_REQUEST.message));
+                } else {
+                    next(err);
+                }
+            });
+    } catch (e) {
+        console.error(e);
+        next(e);
+    }
+};
+
+interface writeOffRequestFromUserParams {
+    chatId: string;
+}
+
+export const writeOffRequestFromUser = async (
+    req: Request<any, any, writeOffRequestFromUserParams>,
+    res: Response,
+    next: NextFunction,
+) => {
+    try {
+        const { chatId } = req.body;
+        User.findOne({ chatId })
+            .then(async user => {
+                if (user) {
+                    if (user.countFreeQueries && +user.countFreeQueries > 0) {
+                        user.countFreeQueries = (+user.countFreeQueries - 1).toString();
+                    } else if (user.countQueries && +user.countQueries > 0) {
+                        user.countQueries = (+user.countQueries - 1).toString();
+                    } else if (user.countQueries && +user.countQueries < 1) {
+                        //это пусть тут будет до тех пор пока не подключим платёжку, чтобы можно было делать запросы "в долг"
+                        user.countQueries = (+user.countQueries - 1).toString();
+                    } else if (!user.countQueries) {
+                        user.countQueries = String(0);
+                    }
+
+                    const updatedUser = await user.save();
+
+                    res.send(updatedUser);
+                } else {
+                    throw new NotFoundError(ERROR_NOT_FOUND.messageUser);
+                }
+            })
+            .catch(err => {
+                if (err.name === 'ValidationError' || err.name === 'CastError') {
+                    next(new BadRequestError(ERROR_BED_REQUEST.message));
+                } else {
+                    next(err);
+                }
+            });
+    } catch (e) {
+        console.error(e);
+        next(e);
     }
 };
 
