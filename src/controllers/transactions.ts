@@ -6,15 +6,19 @@ import { ERROR_NOT_FOUND, ERROR_BED_REQUEST } from '../utils/constants';
 
 interface AddNewTransactionBodyParams {
     chatId: string;
-    prompt: string;
-    originPrompt: string;
-    waitMessageId: string;
+    prompt?: string;
+    originPrompt?: string;
+    waitMessageId?: string;
     action?: string;
-    stage: string;
+    stage?: string;
+    midjourneyClientId?: string;
 }
 
 interface UpdateTransactionBodyParams {
     _id: string;
+    prompt?: string;
+    originPrompt?: string;
+    midjourneyClientId?: string;
     discordMsgId?: string;
     flags?: string;
     buttons?: string;
@@ -28,16 +32,7 @@ export const addNewTransaction = async (
     next: NextFunction,
 ) => {
     try {
-        const { chatId, prompt, originPrompt, waitMessageId, stage, action } = req.body;
-
-        Transactions.create({
-            chatId,
-            prompt,
-            originPrompt,
-            waitMessageId,
-            stage,
-            action,
-        })
+        Transactions.create(req.body)
             .then(data => {
                 res.send(data);
             })
@@ -53,7 +48,7 @@ export const updateTransaction = async (
     next: NextFunction,
 ) => {
     try {
-        const { _id, buttons, flags, discordMsgId, action, stage } = req.body;
+        const { _id, buttons, flags, discordMsgId, action, stage, prompt, originPrompt, midjourneyClientId } = req.body;
         const currentDate = new Date().toISOString();
         const { dateQuery, waitTime } = (await Transactions.findOne({ _id })) as { dateQuery: Date; waitTime: number };
         const leadTime = new Date().getTime() - dateQuery.getTime();
@@ -65,6 +60,9 @@ export const updateTransaction = async (
         if (action) dataForUpdate.action = action;
         if (discordMsgId) dataForUpdate.discordMsgId = discordMsgId;
         if (stage) dataForUpdate.stage = stage;
+        if (prompt) dataForUpdate.prompt = prompt;
+        if (originPrompt) dataForUpdate.originPrompt = originPrompt;
+        if (midjourneyClientId) dataForUpdate.midjourneyClientId = midjourneyClientId;
 
         Transactions.findOneAndUpdate(
             { _id },
@@ -97,6 +95,33 @@ export const updateTransaction = async (
 export const getTransactions = async (req: Request, res: Response, next: NextFunction) => {
     try {
         Transactions.find()
+            .then(data => {
+                if (data) {
+                    res.send({ transactions: data });
+                } else {
+                    throw new NotFoundError(ERROR_NOT_FOUND.messageUser);
+                }
+            })
+            .catch(err => {
+                if (err.name === 'ValidationError' || err.name === 'CastError') {
+                    next(new BadRequestError(ERROR_BED_REQUEST.message));
+                } else {
+                    next(err);
+                }
+            });
+    } catch (e) {
+        console.error('не удалось получить запись', e);
+    }
+};
+
+export const getTransactionsByUserId = async (
+    req: Request<any, any, { chatId: string }>,
+    res: Response,
+    next: NextFunction,
+) => {
+    try {
+        const { chatId } = req.body;
+        Transactions.find({ chatId })
             .then(data => {
                 if (data) {
                     res.send({ transactions: data });

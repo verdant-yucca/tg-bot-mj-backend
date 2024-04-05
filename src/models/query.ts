@@ -13,10 +13,12 @@ const querySchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    prompt: {
+    queryId: {
         type: String,
         required: true,
     },
+    prompt: String,
+    originPrompt: String,
     dateQuery: {
         type: Date,
         default: Date.now,
@@ -27,6 +29,10 @@ const querySchema = new mongoose.Schema({
     action: String,
     dateUpdate: Date,
     leadTime: Number,
+    midjourneyClientId: String,
+    waitMessageId: String,
+    stage: String,
+    waitTime: Number,
 });
 const Query = mongoose.model<QueryModel>('query', querySchema);
 

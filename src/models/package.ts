@@ -5,6 +5,11 @@ interface Package {
     price?: number;
     dateCreate?: Date;
     count?: number;
+    title?: string;
+    description?: string;
+    photoUrl?: string;
+    photoWidth?: number;
+    photoHeight?: number;
 }
 
 interface PackageModel extends Package, Document {}
@@ -23,6 +28,11 @@ const packageSchema = new mongoose.Schema({
         default: Date.now,
     },
     count: Number,
+    title: String,
+    description: String,
+    photoUrl: String,
+    photoWidth: Number,
+    photoHeight: Number,
 });
 const Package = mongoose.model<PackageModel>('package', packageSchema);
 

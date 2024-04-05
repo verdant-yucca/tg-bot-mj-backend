@@ -10,13 +10,18 @@ interface PostPackagesParams {
         name: string;
         price: string;
         count: string;
+        title?: string;
+        description?: string;
+        photoUrl?: string;
+        photoWidth?: number;
+        photoHeight?: number;
     }>;
 }
 
 export const updatePackages = async (req: Request<any, any, PostPackagesParams>, res: Response, next: NextFunction) => {
     const { packages } = req.body;
     try {
-        packages?.forEach(({ _id, name, price, count }) => {
+        packages?.forEach(({ _id, name, price, count, photoHeight, photoUrl, photoWidth, title, description }) => {
             if (_id) {
                 Package.findOneAndUpdate(
                     { _id },
@@ -24,11 +29,16 @@ export const updatePackages = async (req: Request<any, any, PostPackagesParams>,
                         name,
                         price,
                         count,
+                        photoHeight,
+                        photoUrl,
+                        photoWidth,
+                        title,
+                        description,
                     },
                     { returnDocument: 'after' },
                 );
             } else {
-                Package.create({ name, price, count });
+                Package.create({ name, price, count, photoHeight, photoUrl, photoWidth, title, description });
             }
         });
 
@@ -42,7 +52,7 @@ export const getPackages = async (req: Request, res: Response, next: NextFunctio
     Package.find({})
         .then(packages => {
             if (packages) {
-                res.send(packages);
+                res.send({ packages });
             } else {
                 throw new NotFoundError(ERROR_NOT_FOUND.messageUser);
             }

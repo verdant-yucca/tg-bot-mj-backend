@@ -6,20 +6,35 @@ import { ERROR_NOT_FOUND, ERROR_BED_REQUEST } from '../utils/constants';
 
 interface SaveQueryBodyParams {
     chatId: string;
+    queryId: string;
     prompt: string;
-    originPrompt: string;
+    originPrompt?: string;
+    waitMessageId?: string;
+    action?: string;
+    stage?: string;
+    midjourneyClientId?: string;
+    leadTime?: number;
+    waitTime?: number;
+    buttons?: string;
+    flags?: string;
+    discordMsgId?: string;
 }
 
 interface UpdateQueryBodyParams {
     _id: string;
-    discordMsgId: string;
-    flags: string;
-    buttons: string;
-    action: string;
+    queryId: string;
+    discordMsgId?: string;
+    flags?: string;
+    buttons?: string;
+    action?: string;
+    stage?: string;
+    midjourneyClientId?: string;
+    leadTime?: number;
+    waitTime?: number;
 }
 
 interface GetQueryBodyParams {
-    _id: string;
+    queryId: string;
 }
 
 interface GetQueriesBodyParams {
@@ -32,13 +47,7 @@ interface FindOutstandingQueryBodyParams {
 }
 
 export const saveQuery = async (req: Request<any, any, SaveQueryBodyParams>, res: Response, next: NextFunction) => {
-    const { chatId, prompt, originPrompt } = req.body;
-
-    Query.create({
-        chatId,
-        prompt,
-        originPrompt,
-    })
+    Query.create(req.body)
         .then(data => {
             res.send(data);
         })
@@ -46,25 +55,30 @@ export const saveQuery = async (req: Request<any, any, SaveQueryBodyParams>, res
 };
 
 export const updateQuery = async (req: Request<any, any, UpdateQueryBodyParams>, res: Response, next: NextFunction) => {
-    const { _id, buttons, flags, discordMsgId, action } = req.body;
+    const { _id, queryId, buttons, flags, discordMsgId, action, stage, midjourneyClientId, leadTime, waitTime } =
+        req.body;
     const currentDate = new Date().toISOString();
-    const { dateQuery } = (await Query.findOne({ _id })) as { dateQuery: Date };
-    const leadTime = new Date().getTime() - dateQuery.getTime();
+    const updatedData = {} as any;
+    if (queryId) updatedData.queryId = queryId;
+    if (buttons) updatedData.buttons = buttons;
+    if (flags) updatedData.flags = flags;
+    if (discordMsgId) updatedData.discordMsgId = discordMsgId;
+    if (action) updatedData.action = action;
+    if (stage) updatedData.stage = stage;
+    if (midjourneyClientId) updatedData.midjourneyClientId = midjourneyClientId;
+    if (leadTime) updatedData.leadTime = leadTime;
+    if (waitTime) updatedData.waitTime = waitTime;
 
     Query.findOneAndUpdate(
-        { _id },
+        { queryId },
         {
-            buttons,
-            flags,
-            action,
-            discordMsgId,
+            ...updatedData,
             dateUpdate: currentDate,
-            leadTime,
         },
     )
         .then(data => {
             if (data) {
-                res.send({ _id: data._id });
+                res.send(data);
             } else {
                 throw new NotFoundError(ERROR_NOT_FOUND.messageUser);
             }
@@ -79,9 +93,9 @@ export const updateQuery = async (req: Request<any, any, UpdateQueryBodyParams>,
 };
 
 export const getQuery = async (req: Request<any, any, GetQueryBodyParams>, res: Response, next: NextFunction) => {
-    const { _id } = req.body;
+    const { queryId } = req.body;
 
-    Query.findOne({ _id })
+    Query.findOne({ queryId })
         .then(data => {
             if (data) {
                 res.send(data);
@@ -130,7 +144,6 @@ export const findOutstandingQuery = async (
         dateUpdate: { $exists: true, $ne: null },
     })
         .then(data => {
-            console.log('data', data);
             if (data) {
                 res.send({ result: true });
             } else {

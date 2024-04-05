@@ -12,10 +12,8 @@ const transactionsSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    prompt: {
-        type: String,
-        required: true,
-    },
+    prompt: String,
+    originPrompt: String,
     dateQuery: {
         type: Date,
         default: Date.now,
@@ -29,6 +27,7 @@ const transactionsSchema = new mongoose.Schema({
     dateUpdate: Date,
     leadTime: Number,
     waitTime: Number,
+    midjourneyClientId: String,
 });
 const Transactions = mongoose.model<TransactionsModel>('transaction', transactionsSchema);
 

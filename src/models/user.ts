@@ -12,10 +12,19 @@ interface User {
     createDate?: string;
     countFreeQueries?: string;
     countQueries?: string;
+    left?: boolean;
+    selectedStyle?: string;
+    selectedSize?: string;
+    payments?: Array<{ date: string; count: string; price: string }>;
 }
 
 interface UserModel extends User, Document {}
-
+// Определяем схему вложенного объекта
+const nestedSchema = new mongoose.Schema({
+    date: String,
+    count: String,
+    price: String,
+});
 const userSchema = new mongoose.Schema({
     chatId: {
         type: String,
@@ -51,9 +60,13 @@ const userSchema = new mongoose.Schema({
     },
     left: {
         type: Boolean,
-        default: true,
+        default: false,
     },
+    payments: [nestedSchema],
+    selectedStyle: String,
+    selectedSize: String,
 });
+
 const User = mongoose.model<UserModel>('user', userSchema);
 
 export default User;

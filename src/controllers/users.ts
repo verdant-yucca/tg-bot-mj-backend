@@ -15,11 +15,26 @@ interface BodyParams {
     countFreeQueries?: string;
     lastAuth?: string;
     left?: boolean;
+    selectedStyle?: string;
+    selectedSize?: string;
+    payments?: Array<{ count: string; date: string; price: string }>;
 }
 
 export const login = async (req: Request<any, any, BodyParams>, res: Response, next: NextFunction) => {
-    const { chatId, languageCode, username, firstName, lastName, avatarPath, countFreeQueries, countQueries, left } =
-        req.body;
+    const {
+        chatId,
+        languageCode,
+        username,
+        firstName,
+        lastName,
+        avatarPath,
+        countFreeQueries,
+        countQueries,
+        left,
+        payments,
+        selectedStyle,
+        selectedSize,
+    } = req.body;
     const foundUser = await User.findOne({ chatId });
     const currentDate = new Date().toISOString();
 
@@ -30,13 +45,22 @@ export const login = async (req: Request<any, any, BodyParams>, res: Response, n
     if (typeof firstName !== 'undefined') updatedUserFields.firstName = firstName;
     if (typeof lastName !== 'undefined') updatedUserFields.lastName = lastName;
     if (typeof avatarPath !== 'undefined') updatedUserFields.languageCode = languageCode;
-    if (typeof countFreeQueries !== 'undefined') updatedUserFields.languageCode = languageCode;
-    if (typeof countQueries !== 'undefined') updatedUserFields.languageCode = languageCode;
+    if (typeof countFreeQueries !== 'undefined') updatedUserFields.countFreeQueries = countFreeQueries;
+    if (typeof countQueries !== 'undefined') updatedUserFields.countQueries = countQueries;
     if (typeof left !== 'undefined') updatedUserFields.left = left;
-
-    foundUser && console.log('updatedUserFields', chatId, updatedUserFields);
+    if (typeof selectedStyle !== 'undefined') updatedUserFields.selectedStyle = selectedStyle;
+    if (typeof selectedSize !== 'undefined') updatedUserFields.selectedSize = selectedSize;
 
     if (foundUser) {
+        if (foundUser.payments && payments) {
+            updatedUserFields.payments = [...foundUser.payments, ...payments];
+            updatedUserFields.countQueries = (Number(foundUser.countQueries) + Number(payments[0].count)).toString();
+        } else if (!foundUser.payments && payments) {
+            updatedUserFields.payments = [...payments];
+            updatedUserFields.countQueries = (
+                (Number(foundUser.countQueries) || 0) + Number(payments[0].count)
+            ).toString();
+        }
         User.findOneAndUpdate({ chatId }, updatedUserFields, { returnDocument: 'after' })
             .then(user => {
                 if (user) {
@@ -66,7 +90,7 @@ export const login = async (req: Request<any, any, BodyParams>, res: Response, n
             createDate,
             lastAuth,
             countQueries: 0,
-            countFreeQueries: 0,
+            countFreeQueries,
         })
             .then(user => res.send({ user }))
             .catch(err => {
@@ -153,15 +177,21 @@ export const writeOffRequestFromUser = async (
 };
 
 interface GetUsersBodyParams {
-    page: string;
-    pageSize: string;
+    page?: string;
+    pageSize?: string;
 }
 
 export const getUsers = (req: Request<any, any, GetUsersBodyParams>, res: Response, next: NextFunction) => {
     const { page, pageSize } = req.body;
-    User.find({})
-        .skip((+page - 1) * +pageSize)
-        .limit(+pageSize)
-        .then(users => res.send({ users }))
-        .catch(next);
+    if (typeof page !== 'undefined' && typeof pageSize !== 'undefined') {
+        User.find({})
+            .skip((+page - 1) * +pageSize)
+            .limit(+pageSize)
+            .then(users => res.send({ users }))
+            .catch(next);
+    } else {
+        User.find({})
+            .then(users => res.send({ users }))
+            .catch(next);
+    }
 };
