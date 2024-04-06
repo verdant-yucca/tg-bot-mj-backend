@@ -9,7 +9,6 @@ import cors from './middlewares/cors';
 import centralizedError from './middlewares/centralizedError';
 import { requestLogger, errorLogger } from './middlewares/logger';
 import router from './routes/routes';
-import { updateCountFreeQueriesForAllUsers } from './cron/updateCountFreeQueriesForAllUsers';
 
 dotenv.config();
 
@@ -30,7 +29,7 @@ app.use(
 
 cron.schedule('0 0 * * *', async () => {
     try {
-        updateCountFreeQueriesForAllUsers('10');
+        console.log('start cron job');
     } catch (e) {
         console.log(e);
     }

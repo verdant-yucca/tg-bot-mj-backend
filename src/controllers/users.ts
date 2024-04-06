@@ -195,3 +195,32 @@ export const getUsers = (req: Request<any, any, GetUsersBodyParams>, res: Respon
             .catch(next);
     }
 };
+
+interface updateCountFreeQueriesForAllUsersBodyParams {
+    count?: string;
+}
+
+export const updateCountFreeQueriesForAllUsers = async (
+    req: Request<any, any, updateCountFreeQueriesForAllUsersBodyParams>,
+    res: Response,
+    next: NextFunction,
+) => {
+    const { count } = req.body;
+    try {
+        const allUsers = await User.find();
+        allUsers.forEach(async user => {
+            try {
+                if ('countFreeQueries' in user) {
+                    user.countFreeQueries = count;
+                    await user.save();
+                }
+            } catch (e) {
+                console.error('Не удалось обновить значение у юзера: ', user._id);
+            }
+        });
+        res.send({ result: 'Успешно' });
+    } catch (e) {
+        console.error('Обновление бесплытных запросов не выполнено!');
+        next(e);
+    }
+};

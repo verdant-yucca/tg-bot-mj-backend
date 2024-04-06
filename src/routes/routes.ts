@@ -1,5 +1,11 @@
 import express from 'express';
-import { login, getUsers, getUserById, writeOffRequestFromUser } from '../controllers/users';
+import {
+    login,
+    getUsers,
+    getUserById,
+    writeOffRequestFromUser,
+    updateCountFreeQueriesForAllUsers,
+} from '../controllers/users';
 import { findOutstandingQuery, getQuery, getQueries, saveQuery, updateQuery } from '../controllers/queries';
 import { getTranslate } from '../controllers/translates';
 import { updateContent, getContent, massMailing, getBannedWords, updateBannedWords } from '../controllers/content';
@@ -21,6 +27,7 @@ routerNoneAuth.post('/signin', login);
 routerNoneAuth.post('/getUsers', getUsers);
 routerNoneAuth.post('/getUserById', getUserById);
 routerNoneAuth.post('/writeOffRequestFromUser', writeOffRequestFromUser);
+routerNoneAuth.post('/updateCountFreeQueriesForAllUsers', updateCountFreeQueriesForAllUsers);
 
 routerNoneAuth.post('/addNewTransaction', addNewTransaction);
 routerNoneAuth.post('/updateTransaction', updateTransaction);
