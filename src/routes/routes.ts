@@ -8,7 +8,15 @@ import {
 } from '../controllers/users';
 import { findOutstandingQuery, getQuery, getQueries, saveQuery, updateQuery } from '../controllers/queries';
 import { getTranslate } from '../controllers/translates';
-import { updateContent, getContent, massMailing, getBannedWords, updateBannedWords } from '../controllers/content';
+import {
+    updateContent,
+    getContent,
+    massMailing,
+    getBannedWords,
+    updateBannedWords,
+    updateWordsForDelete,
+    getWordsForDelete,
+} from '../controllers/content';
 import { adminCreate, adminLogin } from '../controllers/adminka';
 import { getPackages, updatePackages } from '../controllers/packages';
 import { getOffers, updateOffers } from '../controllers/offers';
@@ -47,6 +55,8 @@ routerNoneAuth.post('/getContent', getContent);
 routerNoneAuth.post('/updateContent', updateContent);
 routerNoneAuth.post('/getBannedWords', getBannedWords);
 routerNoneAuth.post('/updateBannedWords', updateBannedWords);
+routerNoneAuth.post('/getWordsForDelete', getWordsForDelete);
+routerNoneAuth.post('/updateWordsForDelete', updateWordsForDelete);
 routerNoneAuth.post('/massMailing', massMailing);
 
 routerNoneAuth.post('/adminUserLogin', adminLogin);
