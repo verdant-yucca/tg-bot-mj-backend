@@ -5,44 +5,39 @@ import { ERROR_NOT_FOUND, ERROR_BED_REQUEST } from '../utils/constants';
 import Package from '../models/package';
 
 interface PostPackagesParams {
-    packages: Array<{
-        _id?: string;
-        name: string;
-        price: string;
-        count: string;
-        title?: string;
-        description?: string;
-        photoUrl?: string;
-        photoWidth?: number;
-        photoHeight?: number;
-    }>;
+    _id?: string;
+    name: string;
+    price: string;
+    count: string;
+    title?: string;
+    description?: string;
+    photoUrl?: string;
+    photoWidth?: number;
+    photoHeight?: number;
 }
 
 export const updatePackages = async (req: Request<any, any, PostPackagesParams>, res: Response, next: NextFunction) => {
-    const { packages } = req.body;
+    const { _id, name, price, count, photoHeight, photoUrl, photoWidth, title, description } = req.body;
     try {
-        packages?.forEach(({ _id, name, price, count, photoHeight, photoUrl, photoWidth, title, description }) => {
-            if (_id) {
-                Package.findOneAndUpdate(
-                    { _id },
-                    {
-                        name,
-                        price,
-                        count,
-                        photoHeight,
-                        photoUrl,
-                        photoWidth,
-                        title,
-                        description,
-                    },
-                    { returnDocument: 'after' },
-                );
-            } else {
-                Package.create({ name, price, count, photoHeight, photoUrl, photoWidth, title, description });
-            }
-        });
+        if (_id) {
+            const dataForUpdate = {} as Record<string, any>;
+            if (name) dataForUpdate.name = name;
+            if (price) dataForUpdate.price = price;
+            if (count) dataForUpdate.count = count;
+            if (photoHeight) dataForUpdate.photoHeight = photoHeight;
+            if (photoUrl) dataForUpdate.photoUrl = photoUrl;
+            if (photoWidth) dataForUpdate.photoWidth = photoWidth;
+            if (title) dataForUpdate.title = title;
+            if (description) dataForUpdate.description = description;
 
-        res.send({ result: 'успешно' });
+            Package.findOneAndUpdate({ _id }, dataForUpdate, { returnDocument: 'after' }).then(() => {
+                res.send({ result: 'успешно' });
+            });
+        } else {
+            Package.create({ name, price, count, photoHeight, photoUrl, photoWidth, title, description }).then(() => {
+                res.send({ result: 'не успешно' });
+            });
+        }
     } catch (e) {
         next(e);
     }

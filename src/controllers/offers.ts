@@ -5,41 +5,39 @@ import { ERROR_NOT_FOUND, ERROR_BED_REQUEST } from '../utils/constants';
 import Offer from '../models/offer';
 
 interface PostPackagesParams {
-    offers: {
-        _id: string;
-        name: string;
-        factor: string;
-        dateStart: string;
-        dateEnd: string;
-    }[];
+    _id: string;
+    name: string;
+    factor: string;
+    dateStart: string;
+    dateEnd: string;
 }
 
 export const updateOffers = async (req: Request<any, any, PostPackagesParams>, res: Response, next: NextFunction) => {
-    const { offers } = req.body;
+    const { _id, name, factor, dateStart, dateEnd } = req.body;
 
     try {
-        offers?.forEach(({ _id, name, factor, dateStart, dateEnd }) => {
-            if (_id) {
-                Offer.findOneAndUpdate(
-                    { _id },
-                    {
-                        name,
-                        factor,
-                        dateStart: dateStart ? new Date(dateStart).toLocaleDateString() : '',
-                        dateEnd: dateEnd ? new Date(dateEnd).toLocaleDateString() : '',
-                    },
-                );
-            } else {
-                Offer.create({
+        if (_id) {
+            Offer.findOneAndUpdate(
+                { _id },
+                {
                     name,
                     factor,
                     dateStart: dateStart ? new Date(dateStart).toLocaleDateString() : '',
                     dateEnd: dateEnd ? new Date(dateEnd).toLocaleDateString() : '',
-                });
-            }
-        });
-
-        res.send({ result: 'успешно' });
+                },
+            ).then(() => {
+                res.send({ result: 'успешно' });
+            });
+        } else {
+            Offer.create({
+                name,
+                factor,
+                dateStart: dateStart ? new Date(dateStart).toLocaleDateString() : '',
+                dateEnd: dateEnd ? new Date(dateEnd).toLocaleDateString() : '',
+            }).then(() => {
+                res.send({ result: 'успешно' });
+            });
+        }
     } catch (e) {
         next(e);
     }
