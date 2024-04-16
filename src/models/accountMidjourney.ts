@@ -42,6 +42,6 @@ const accountMidjourneySchema = new mongoose.Schema({
         default: Date.now,
     },
 });
-const AccountMidjourney = mongoose.model<AccountMidjourneyModel>('package', accountMidjourneySchema);
+const AccountMidjourney = mongoose.model<AccountMidjourneyModel>('accountMidjourney', accountMidjourneySchema);
 
 export default AccountMidjourney;
