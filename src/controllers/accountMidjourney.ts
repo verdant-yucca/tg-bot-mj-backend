@@ -29,7 +29,8 @@ export const createAvailableAccountMidjourney = async (
     next: NextFunction,
 ) => {
     try {
-        AccountMidjourney.create(req.body)
+        const { customId, name, ServerId, status, DiscordToken, ChannelId } = req.body;
+        AccountMidjourney.create({ customId, name, ServerId, status, DiscordToken, ChannelId })
             .then(data => {
                 res.send(data);
             })
@@ -45,12 +46,17 @@ export const updateAvailableAccountMidjourney = async (
     next: NextFunction,
 ) => {
     try {
-        const { _id } = req.body;
+        const { _id, customId, name, ServerId, status, DiscordToken, ChannelId } = req.body;
 
         AccountMidjourney.findOneAndUpdate(
             { _id },
             {
-                ...req.body,
+                customId,
+                name,
+                ServerId,
+                status,
+                DiscordToken,
+                ChannelId,
             },
         )
             .then(data => {
