@@ -50,7 +50,8 @@ export const updateTransaction = async (
     try {
         const { _id, buttons, flags, discordMsgId, action, stage, prompt, originPrompt, midjourneyClientId } = req.body;
         const currentDate = new Date().toISOString();
-        const { dateQuery, waitTime } = (await Transactions.findOne({ _id })) as { dateQuery: Date; waitTime: number };
+        const { dateQuery = new Date(), waitTime = 0 } =
+            ((await Transactions.findOne({ _id })) as { dateQuery: Date; waitTime: number } | undefined) || {};
         const leadTime = new Date().getTime() - dateQuery.getTime();
         const isCompleted = stage === 'completed';
 

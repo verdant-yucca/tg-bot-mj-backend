@@ -29,6 +29,11 @@ import {
 } from '../controllers/transactions';
 import { getPayments, newPayment } from '../controllers/payments';
 import { getSettings, updateSettings } from '../controllers/settings';
+import {
+    updateAvailableAccountMidjourney,
+    createAvailableAccountMidjourney,
+    getAvailableAccountMidjourney,
+} from '../controllers/accountMidjourney';
 
 const routerNoneAuth = express.Router();
 routerNoneAuth.post('/signin', login);
@@ -36,6 +41,10 @@ routerNoneAuth.post('/getUsers', getUsers);
 routerNoneAuth.post('/getUserById', getUserById);
 routerNoneAuth.post('/writeOffRequestFromUser', writeOffRequestFromUser);
 routerNoneAuth.post('/updateCountFreeQueriesForAllUsers', updateCountFreeQueriesForAllUsers);
+
+routerNoneAuth.post('/getAvailableAccountMidjourney', getAvailableAccountMidjourney);
+routerNoneAuth.post('/createAvailableAccountMidjourney', createAvailableAccountMidjourney);
+routerNoneAuth.post('/updateAvailableAccountMidjourney', updateAvailableAccountMidjourney);
 
 routerNoneAuth.post('/addNewTransaction', addNewTransaction);
 routerNoneAuth.post('/updateTransaction', updateTransaction);
