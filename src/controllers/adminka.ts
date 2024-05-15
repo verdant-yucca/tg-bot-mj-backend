@@ -11,7 +11,7 @@ interface BodyParams {
     password: string;
 }
 
-export const adminCreate = (req: Request<any, any, BodyParams>, res: Response, next: NextFunction) => {
+export const adminCreate = async (req: Request<any, any, BodyParams>, res: Response, next: NextFunction) => {
     const { login, password } = req.body;
     bcrypt
         .hash(password, 10)
@@ -34,7 +34,7 @@ export const adminCreate = (req: Request<any, any, BodyParams>, res: Response, n
         .catch(next);
 };
 
-export const adminLogin = (req: Request<any, any, BodyParams>, res: Response, next: NextFunction) => {
+export const adminLogin = async (req: Request<any, any, BodyParams>, res: Response, next: NextFunction) => {
     const { login, password } = req.body;
     AdminUser.findOne({ login })
         .select('+password')

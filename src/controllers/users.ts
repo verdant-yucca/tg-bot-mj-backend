@@ -61,6 +61,7 @@ export const login = async (req: Request<any, any, BodyParams>, res: Response, n
                 (Number(foundUser.countQueries) || 0) + Number(payments[0].count)
             ).toString();
         }
+
         User.findOneAndUpdate({ chatId }, updatedUserFields, { returnDocument: 'after' })
             .then(user => {
                 if (user) {
@@ -145,13 +146,21 @@ export const writeOffRequestFromUser = async (
         User.findOne({ chatId })
             .then(async user => {
                 if (user) {
+                    try {
+                        user.countCompletedRequests = (+(user.countCompletedRequests || 0) + 1).toString();
+                    } catch (e) {
+                        console.log(e);
+                    }
+
                     if (user.countFreeQueries && +user.countFreeQueries > 0) {
                         user.countFreeQueries = (+user.countFreeQueries - 1).toString();
                     } else if (user.countQueries && +user.countQueries > 0) {
                         user.countQueries = (+user.countQueries - 1).toString();
                     } else if (user.countQueries && +user.countQueries < 1) {
                         //это пусть тут будет до тех пор пока не подключим платёжку, чтобы можно было делать запросы "в долг"
-                        user.countQueries = (+user.countQueries - 1).toString();
+                        // user.countQueries = (+user.countQueries - 1).toString();
+
+                        user.countQueries = String(0);
                     } else if (!user.countQueries) {
                         user.countQueries = String(0);
                     }

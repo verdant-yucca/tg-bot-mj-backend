@@ -15,6 +15,7 @@ interface User {
     left?: boolean;
     selectedStyle?: string;
     selectedSize?: string;
+    countCompletedRequests?: string;
     payments?: Array<{ date: string; count: string; price: string }>;
 }
 
@@ -65,6 +66,7 @@ const userSchema = new mongoose.Schema({
     payments: [nestedSchema],
     selectedStyle: String,
     selectedSize: String,
+    countCompletedRequests: String,
 });
 
 const User = mongoose.model<UserModel>('user', userSchema);
